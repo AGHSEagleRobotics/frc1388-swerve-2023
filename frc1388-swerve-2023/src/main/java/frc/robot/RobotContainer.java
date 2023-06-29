@@ -6,13 +6,15 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.SwerveDriveCommand;
 import frc.robot.commands.SwerveModuleTestCommand;
-import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.SwerveDriveTrain;
 import frc.robot.subsystems.SwerveModuleTestSubsystem;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.sensors.CANCoder;
 
+import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -26,12 +28,34 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-
   private final SwerveModuleTestSubsystem m_SwerveModuleTestSubsystem = new SwerveModuleTestSubsystem(
     new WPI_TalonFX(0), 
     new WPI_TalonFX(1)
   );
+
+    private final SwerveDriveTrain m_driveTrain = new SwerveDriveTrain(
+      new SwerveModule(
+        new WPI_TalonFX(0),
+        new WPI_TalonFX(4),
+        new CANCoder(8)
+      ),
+      new SwerveModule(
+        new WPI_TalonFX(1),
+        new WPI_TalonFX(5),
+        new CANCoder(9)
+      ),
+      new SwerveModule(
+        new WPI_TalonFX(2),
+        new WPI_TalonFX(6),
+        new CANCoder(10)
+      ),
+      new SwerveModule (
+        new WPI_TalonFX (3),
+        new WPI_TalonFX (7),
+        new CANCoder(11)
+      ),
+      new ADIS16470_IMU()
+    );
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -57,13 +81,21 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    SwerveDriveCommand m_swerveCommand = new SwerveDriveCommand(
+    m_driveTrain, 
+    () -> m_driverController.getLeftY(), 
+    () -> m_driverController.getRightX(), 
+    () -> m_driverController.getLeftX()
+  );
+
+  m_driveTrain.setDefaultCommand(m_swerveCommand);
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
+    // new Trigger(m_exampleSubsystem::exampleCondition) XXX example, remove latter
+    //     .onTrue(new ExampleCommand(m_exampleSubsystem)); XXX example, remove latter
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+    // m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand()); XXX example, remove latter
   }
 
   /**
@@ -72,7 +104,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    return null; // <- if this is broken, this is why X
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+    // return Autos.exampleAuto(m_exampleSubsystem); XXX example, remove latter
   }
 }
