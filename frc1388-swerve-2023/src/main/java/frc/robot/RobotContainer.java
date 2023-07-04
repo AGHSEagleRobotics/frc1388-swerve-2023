@@ -5,7 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
+// import frc.robot.commands.Autos;
 import frc.robot.commands.SwerveDriveCommand;
 import frc.robot.commands.SwerveModuleTestCommand;
 import frc.robot.subsystems.SwerveDriveTrain;
@@ -16,7 +16,6 @@ import com.ctre.phoenix.sensors.CANCoder;
 
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -37,22 +36,26 @@ public class RobotContainer {
       new SwerveModule(
         new WPI_TalonFX(0),
         new WPI_TalonFX(4),
-        new CANCoder(8)
+        new CANCoder(8),
+        0
       ),
       new SwerveModule(
         new WPI_TalonFX(1),
         new WPI_TalonFX(5),
-        new CANCoder(9)
+        new CANCoder(9),
+        0
       ),
       new SwerveModule(
         new WPI_TalonFX(2),
         new WPI_TalonFX(6),
-        new CANCoder(10)
+        new CANCoder(10),
+        0
       ),
       new SwerveModule (
         new WPI_TalonFX (3),
         new WPI_TalonFX (7),
-        new CANCoder(11)
+        new CANCoder(11),
+        0
       ),
       new ADIS16470_IMU()
     );

@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlFrame;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -9,12 +10,20 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.SensorTimeBase;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 public class SwerveModule {
 
     private final WPI_TalonFX m_driveMotor;
+    private final double WHEEL_DIAMETER_INCHES = 4.0;
+    private final double WHEEL_CIRCUMFERENCE_METERS = Math.PI * WHEEL_DIAMETER_INCHES  / Constants.inchesPerMeter;
+    private final double MOTOR_ROTATIONS_PER_WHEEL_ROTATION = 6.75;
+    private final double SENSOR_UNITS_PER_MOTOR_ROTATION = 2048;
+    private final double SECONDS_PER_100MS = 10;
+
+    private final double SENSOR_CYCLE_SECONDS_PER_100MS_METERS = WHEEL_CIRCUMFERENCE_METERS * MOTOR_ROTATIONS_PER_WHEEL_ROTATION * SENSOR_UNITS_PER_MOTOR_ROTATION * SECONDS_PER_100MS;
 
     private final WPI_TalonFX m_rotationMotor;
 
@@ -22,7 +31,9 @@ public class SwerveModule {
 
     private final CANCoderConfiguration m_canCoderConfig = new CANCoderConfiguration();
 
-    public SwerveModule(WPI_TalonFX driveMotor, WPI_TalonFX rotationMotor, CANCoder canCoder) {
+    private final PIDController m_rotationPID;
+
+    public SwerveModule(WPI_TalonFX driveMotor, WPI_TalonFX rotationMotor, CANCoder canCoder, double encoderOffset) {
         m_driveMotor = driveMotor;
         m_driveMotor.configFactoryDefault();
         m_driveMotor.setNeutralMode(NeutralMode.Brake);
@@ -35,7 +46,16 @@ public class SwerveModule {
         m_rotationMotor = rotationMotor;
         m_rotationMotor.configFactoryDefault();
         m_rotationMotor.setNeutralMode(NeutralMode.Brake);
-        m_rotationMotor.configSelectedFeedbackSensor(RemoteFeedbackDevice.valueOf(0));
+        m_rotationMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
+
+        m_rotationPID = new PIDController(
+            0,
+            0,
+            0
+        );
+
+        // m_rotationMotor.setControlFramePeriod(ControlFrame.Control_3_General, 20); XXX look into this
+
         m_rotationMotor.config_kF(0, 0);
         m_rotationMotor.config_kP(0, 0);
         m_rotationMotor.config_kI(0, 0);
@@ -43,6 +63,7 @@ public class SwerveModule {
 
         m_canCoder = canCoder;
         m_canCoderConfig.sensorTimeBase = SensorTimeBase.PerSecond;
+        // m_canCoderConfig.magnetOffsetDegrees(encoderOffset);
         m_canCoder.configAllSettings(m_canCoderConfig);
     }
 
@@ -60,7 +81,7 @@ public class SwerveModule {
      */
     public void setDriveSpeed(double inputSpeed) {
         // TODO: math to input speed, velocity is in sensor units / 100 ms
-        m_driveMotor.set(ControlMode.Velocity, inputSpeed);
+        m_driveMotor.set(ControlMode.Velocity, inputSpeed * SENSOR_CYCLE_SECONDS_PER_100MS_METERS);
     }
 
     /**
@@ -68,11 +89,15 @@ public class SwerveModule {
      * @param angle is in degrees
      */
     public void setRotationPosition(double angle) {
-        m_rotationMotor.set(ControlMode.Position, angle);
+        m_rotationMotor.set(m_rotationPID.calculate(getRotationAngle(), angle));
     }
 
     public double getRotationAngle() {
         return m_canCoder.getPosition();
+    }
+
+    public void periodic() {
+        System.out.println("encoder angle: " + getRotationAngle() + "\t    motor sensor pos: " + m_rotationMotor.getSelectedSensorPosition());
     }
 
 }
