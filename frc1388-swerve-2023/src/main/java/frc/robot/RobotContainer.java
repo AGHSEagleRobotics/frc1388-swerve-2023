@@ -94,8 +94,8 @@ public class RobotContainer {
     SwerveDriveCommand m_swerveCommand = new SwerveDriveCommand(
         m_driveTrain,
         () -> m_driverController.getLeftY(),
-        () -> m_driverController.getRightX(),
-        () -> m_driverController.getLeftX()
+        () -> m_driverController.getLeftX(),
+        () -> m_driverController.getRightX()
       );
     m_driveTrain.setDefaultCommand(m_swerveCommand);
 

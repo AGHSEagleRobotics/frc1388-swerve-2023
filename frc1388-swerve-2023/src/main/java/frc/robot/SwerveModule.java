@@ -18,12 +18,18 @@ public class SwerveModule {
 
     private final WPI_TalonFX m_driveMotor;
     private final double WHEEL_DIAMETER_INCHES = 4.0;
-    private final double WHEEL_CIRCUMFERENCE_METERS = Math.PI * WHEEL_DIAMETER_INCHES  / Constants.inchesPerMeter;
+    private final double METERS_PER_WHEEL_ROTATION = Math.PI * WHEEL_DIAMETER_INCHES / Constants.inchesPerMeter;
+    private final double WHEEL_ROTATIONS_PER_METER = 1 / METERS_PER_WHEEL_ROTATION;
     private final double MOTOR_ROTATIONS_PER_WHEEL_ROTATION = 6.75;
     private final double SENSOR_UNITS_PER_MOTOR_ROTATION = 2048;
-    private final double SECONDS_PER_100MS = 10;
+    private final double SECONDS_PER_100MS = 0.1;
 
-    private final double SENSOR_CYCLE_SECONDS_PER_100MS_METERS = WHEEL_CIRCUMFERENCE_METERS * MOTOR_ROTATIONS_PER_WHEEL_ROTATION * SENSOR_UNITS_PER_MOTOR_ROTATION * SECONDS_PER_100MS;
+    /**
+     * (meters / second) times this constant results in (sensor units / 100ms)
+     * <p>
+     * (i think the math works)
+     */
+    private final double SENSOR_CYCLE_SECONDS_PER_100MS_METERS = WHEEL_ROTATIONS_PER_METER * MOTOR_ROTATIONS_PER_WHEEL_ROTATION * SENSOR_UNITS_PER_MOTOR_ROTATION * SECONDS_PER_100MS;
 
     private final WPI_TalonFX m_rotationMotor;
 
@@ -38,9 +44,9 @@ public class SwerveModule {
         m_driveMotor.configFactoryDefault();
         m_driveMotor.setNeutralMode(NeutralMode.Brake);
         m_driveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
-        m_driveMotor.config_kF(0, 0.055); // from frc1388-2023 
-        m_driveMotor.config_kP(0, 0.03);
-        m_driveMotor.config_kI(0, 0.0001);
+        m_driveMotor.config_kF(0, 0); 
+        m_driveMotor.config_kP(0, 0.001);// form 2022 swerve
+        m_driveMotor.config_kI(0, 0);
         m_driveMotor.config_kD(0, 0);
 
         m_rotationMotor = rotationMotor;
@@ -49,7 +55,7 @@ public class SwerveModule {
         m_rotationMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
 
         m_rotationPID = new PIDController(
-            0,
+            0.01, 
             0,
             0
         );
@@ -77,7 +83,7 @@ public class SwerveModule {
      * @param inputSpeed is in meters / second
      */
     public void setDriveSpeed(double inputSpeed) {
-        // TODO: math to input speed, velocity is in sensor units / 100 ms  
+        // TODO: math to input speed, velocity is in sensor units / 100 ms
         m_driveMotor.set(ControlMode.Velocity, inputSpeed * SENSOR_CYCLE_SECONDS_PER_100MS_METERS);
     }
 

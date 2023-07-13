@@ -13,7 +13,7 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static double inchesPerMeter = 0.0254;
+  public static double inchesPerMeter = 39.3701; //0.0254;
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }

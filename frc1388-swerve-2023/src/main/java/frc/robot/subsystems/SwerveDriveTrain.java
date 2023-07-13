@@ -63,6 +63,7 @@ public class SwerveDriveTrain extends SubsystemBase {
   }
 
   public void drive(double xVelocity, double yVelocity, double omega) {
+    System.out.println("x: " + xVelocity + "\t  y: " + yVelocity + "\t  omega: " + omega);
     ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega, getGyroHeading());
     // ChassisSpeeds normalSpeeds = new ChassisSpeeds(xVelocity, yVelocity, omega); XXX -> for not field relitive <-
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(fieldRelativeSpeeds);
@@ -84,7 +85,7 @@ public class SwerveDriveTrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    System.out.println("current gyro angle: " + getGyroHeading().getDegrees()); //XXX temp removed
+    // System.out.println("current gyro angle: " + getGyroHeading().getDegrees()); //XXX temp removed
     // This method will be called once per scheduler run
   }
 }
