@@ -8,6 +8,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
@@ -43,6 +45,8 @@ public class SwerveDriveTrain extends SubsystemBase {
 
   private final ADIS16470_IMU m_gyro;
 
+  // private final SwerveDriveOdometry swerveOdometry;
+
   /** Creates a new SwerveDriveTrain. */
   public SwerveDriveTrain(SwerveModule frontRight, SwerveModule frontLeft, SwerveModule backLeft, SwerveModule backRight, ADIS16470_IMU gyro) {
     m_frontRight = frontRight;
@@ -53,12 +57,15 @@ public class SwerveDriveTrain extends SubsystemBase {
     m_gyro = gyro;
     m_gyro.calibrate();
     m_gyro.reset();
-    m_gyro.setYawAxis(IMUAxis.kZ);
+    m_gyro.setYawAxis(IMUAxis.kX);
+
+    // swerveOdometry = new SwerveDriveOdometry(new SwerveDriveKinematics(m_frontRightTranslation, m_frontLeftTranslation, m_backLeftTranslation, m_backRightTranslation), new Rotation2d(0), new SwerveModulePosition());
   }
 
   public void drive(double xVelocity, double yVelocity, double omega) {
-    ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega, new Rotation2d(Math.toRadians(m_gyro.getAngle())));
-    SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);
+    ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega, getGyroHeading());
+    // ChassisSpeeds normalSpeeds = new ChassisSpeeds(xVelocity, yVelocity, omega); XXX -> for not field relitive <-
+    SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(fieldRelativeSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, 3.0);
 
     m_frontRight.setSwerveModuleStates(states[0]);
@@ -67,8 +74,17 @@ public class SwerveDriveTrain extends SubsystemBase {
     m_backRight.setSwerveModuleStates(states[3]);
   }
 
+  private Rotation2d getGyroHeading() {
+    return new Rotation2d(Math.toRadians(Math.IEEEremainder(m_gyro.getAngle(), 360)));
+  }
+
+  public void resetGyroHeading() {
+    m_gyro.reset();
+  }
+
   @Override
   public void periodic() {
+    System.out.println("current gyro angle: " + getGyroHeading().getDegrees()); //XXX temp removed
     // This method will be called once per scheduler run
   }
 }

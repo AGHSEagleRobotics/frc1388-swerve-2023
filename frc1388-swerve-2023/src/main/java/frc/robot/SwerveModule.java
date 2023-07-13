@@ -38,7 +38,7 @@ public class SwerveModule {
         m_driveMotor.configFactoryDefault();
         m_driveMotor.setNeutralMode(NeutralMode.Brake);
         m_driveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
-        m_driveMotor.config_kF(0, 0.055); // from frc1388-2023
+        m_driveMotor.config_kF(0, 0.055); // from frc1388-2023 
         m_driveMotor.config_kP(0, 0.03);
         m_driveMotor.config_kI(0, 0.0001);
         m_driveMotor.config_kD(0, 0);
@@ -56,10 +56,7 @@ public class SwerveModule {
 
         // m_rotationMotor.setControlFramePeriod(ControlFrame.Control_3_General, 20); XXX look into this
 
-        m_rotationMotor.config_kF(0, 0);
-        m_rotationMotor.config_kP(0, 0);
-        m_rotationMotor.config_kI(0, 0);
-        m_rotationMotor.config_kD(0, 0);
+
 
         m_canCoder = canCoder;
         m_canCoderConfig.sensorTimeBase = SensorTimeBase.PerSecond;
@@ -80,7 +77,7 @@ public class SwerveModule {
      * @param inputSpeed is in meters / second
      */
     public void setDriveSpeed(double inputSpeed) {
-        // TODO: math to input speed, velocity is in sensor units / 100 ms
+        // TODO: math to input speed, velocity is in sensor units / 100 ms  
         m_driveMotor.set(ControlMode.Velocity, inputSpeed * SENSOR_CYCLE_SECONDS_PER_100MS_METERS);
     }
 

@@ -7,6 +7,7 @@ package frc.robot.commands;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveDriveTrain;
 
@@ -18,6 +19,9 @@ public class SwerveDriveCommand extends CommandBase {
   private final Supplier<Double> m_leftX;
   private final Supplier<Double> m_rightX;
 
+  // private final SlewRateLimiter m_translationalAccLimiter;
+  // private final SlewRateLimiter m_rotationalAccLimiter;
+
   /** Creates a new SwerveDriveCommand. */
   public SwerveDriveCommand(SwerveDriveTrain driveTrain, Supplier<Double> leftY, Supplier<Double> leftX, Supplier<Double> rightX) {
     m_driveTrain = driveTrain;
@@ -25,6 +29,10 @@ public class SwerveDriveCommand extends CommandBase {
     m_leftY = leftY;
     m_leftX = leftX;
     m_rightX = rightX;
+
+    // XXX re-add these latter for acceleration limit
+    // m_translationalAccLimiter = new SlewRateLimiter(2.0);
+    // m_rotationalAccLimiter = new SlewRateLimiter(2.0);
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(driveTrain);
   }
