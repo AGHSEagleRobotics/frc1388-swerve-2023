@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SwerveModule;
 
@@ -24,8 +25,8 @@ public class SwerveDriveTrain extends SubsystemBase {
   // private final int BR_INDEX = 3;
 
 
-  private final double ROBOT_WIDTH = 0;
-  private final double ROBOT_LENGTH = 0;
+  private final double ROBOT_WIDTH = 0.4318; // in meters
+  private final double ROBOT_LENGTH = 0.4318; // in meters
 
   private final SwerveModule m_frontRight, m_frontLeft, m_backLeft, m_backRight;
 
@@ -57,7 +58,7 @@ public class SwerveDriveTrain extends SubsystemBase {
     m_gyro = gyro;
     m_gyro.calibrate();
     m_gyro.reset();
-    m_gyro.setYawAxis(IMUAxis.kX);
+    m_gyro.setYawAxis(IMUAxis.kZ);
 
     // swerveOdometry = new SwerveDriveOdometry(new SwerveDriveKinematics(m_frontRightTranslation, m_frontLeftTranslation, m_backLeftTranslation, m_backRightTranslation), new Rotation2d(0), new SwerveModulePosition());
   }
@@ -73,10 +74,16 @@ public class SwerveDriveTrain extends SubsystemBase {
     m_frontLeft.setSwerveModuleStates(states[1]);
     m_backLeft.setSwerveModuleStates(states[2]);
     m_backRight.setSwerveModuleStates(states[3]);
+    
+    // smart dash board
+    SmartDashboard.putNumber("x velocity", xVelocity);
+    SmartDashboard.putNumber("y velocity", yVelocity);
+    SmartDashboard.putNumber("omega", omega);
+
   }
 
   private Rotation2d getGyroHeading() {
-    return new Rotation2d(Math.toRadians(Math.IEEEremainder(m_gyro.getAngle(), 360)));
+    return new Rotation2d(-Math.toRadians(Math.IEEEremainder(m_gyro.getAngle(), 360)));
   }
 
   public void resetGyroHeading() {
@@ -86,6 +93,13 @@ public class SwerveDriveTrain extends SubsystemBase {
   @Override
   public void periodic() {
     // System.out.println("current gyro angle: " + getGyroHeading().getDegrees()); //XXX temp removed
+    SmartDashboard.putNumber("current gyro angle", getGyroHeading().getDegrees());
+    m_frontRight.periodic();
+    m_frontLeft.periodic();
+    m_backLeft.periodic();
+    m_backRight.periodic();
+    
+
     // This method will be called once per scheduler run
   }
 }

@@ -43,29 +43,33 @@ public class RobotContainer {
   /** DriveTrain */
   private final SwerveDriveTrain m_driveTrain = new SwerveDriveTrain(
       new SwerveModule(
-          new WPI_TalonFX(0),
-          new WPI_TalonFX(4),
-          new CANCoder(8),
-          0),
-      new SwerveModule(
           new WPI_TalonFX(1),
           new WPI_TalonFX(5),
           new CANCoder(9),
-          0),
+          117,
+          "frontRight"),
       new SwerveModule(
           new WPI_TalonFX(2),
           new WPI_TalonFX(6),
           new CANCoder(10),
-          0),
+          0,
+          "frontLeft"),
       new SwerveModule(
           new WPI_TalonFX(3),
           new WPI_TalonFX(7),
           new CANCoder(11),
-          0),
+          0,
+          "backLeft"),
+      new SwerveModule(
+          new WPI_TalonFX(4),
+          new WPI_TalonFX(8),
+          new CANCoder(12),
+          0,
+          "backRight"),
       new ADIS16470_IMU());
 
-  private final CommandXboxController m_driverController = new CommandXboxController(
-      OperatorConstants.kDriverControllerPort);
+  /** controller */
+  private final CommandXboxController m_driverController = new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.

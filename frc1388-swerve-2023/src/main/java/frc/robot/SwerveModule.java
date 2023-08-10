@@ -13,6 +13,7 @@ import com.ctre.phoenix.sensors.SensorTimeBase;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveModule {
 
@@ -34,12 +35,15 @@ public class SwerveModule {
     private final WPI_TalonFX m_rotationMotor;
 
     private final CANCoder m_canCoder;
-
     private final CANCoderConfiguration m_canCoderConfig = new CANCoderConfiguration();
 
     private final PIDController m_rotationPID;
 
-    public SwerveModule(WPI_TalonFX driveMotor, WPI_TalonFX rotationMotor, CANCoder canCoder, double encoderOffset) {
+    private final String m_name;
+
+    private final double m_encoderOffset;
+
+    public SwerveModule(WPI_TalonFX driveMotor, WPI_TalonFX rotationMotor, CANCoder canCoder, double encoderOffset, String name) {
         m_driveMotor = driveMotor;
         m_driveMotor.configFactoryDefault();
         m_driveMotor.setNeutralMode(NeutralMode.Brake);
@@ -55,19 +59,20 @@ public class SwerveModule {
         m_rotationMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
 
         m_rotationPID = new PIDController(
-            0.01, 
+           0.005, // was .005
             0,
             0
         );
 
         // m_rotationMotor.setControlFramePeriod(ControlFrame.Control_3_General, 20); XXX look into this
 
-
-
         m_canCoder = canCoder;
         m_canCoderConfig.sensorTimeBase = SensorTimeBase.PerSecond;
         // m_canCoderConfig.magnetOffsetDegrees(encoderOffset);
         m_canCoder.configAllSettings(m_canCoderConfig);
+        m_encoderOffset = encoderOffset;
+        
+        m_name = name;
     }
 
     public void setSwerveModuleStates(SwerveModuleState inputState) {
@@ -83,8 +88,9 @@ public class SwerveModule {
      * @param inputSpeed is in meters / second
      */
     public void setDriveSpeed(double inputSpeed) {
-        // TODO: math to input speed, velocity is in sensor units / 100 ms
-        m_driveMotor.set(ControlMode.Velocity, inputSpeed * SENSOR_CYCLE_SECONDS_PER_100MS_METERS);
+        // m_driveMotor.set(ControlMode.Velocity, inputSpeed * SENSOR_CYCLE_SECONDS_PER_100MS_METERS);        
+        SmartDashboard.putNumber(m_name + " set speed ", inputSpeed / 3);
+        // m_driveMotor.set(inputSpeed / 3);
     }
 
     /**
@@ -92,15 +98,25 @@ public class SwerveModule {
      * @param angle is in degrees
      */
     public void setRotationPosition(double angle) {
-        m_rotationMotor.set(m_rotationPID.calculate(getRotationAngle(), angle));
+        // SmartDashboard.putNumber(m_name + "encoder value", getRotationAngle());
+        SmartDashboard.putNumber(m_name + " set angle ", angle);
+
+        // m_rotationMotor.set(m_rotationPID.calculate(getRotationAngle(), 90));
+        // m_rotationMotor.set(m_rotationPID.calculate(getRotationAngle(), 0 + 90));
     }
 
     public double getRotationAngle() {
-        return m_canCoder.getPosition();
+        return (m_canCoder.getPosition() - m_encoderOffset) % 360; // neg
     }
 
     public void periodic() {
-        System.out.println("encoder angle: " + getRotationAngle() + "\t    motor sensor pos: " + m_rotationMotor.getSelectedSensorPosition());
+        // System.out.println("encoder angle: " + getRotationAngle() + "\t    motor sensor pos: " + m_rotationMotor.getSelectedSensorPosition());
+        // System.out.println("swerve moduleing");
+        // m_driveMotor.set(0.2);
+        // SmartDashboard.putNumber(m_name + "encoder value", getRotationAngle());
+        SmartDashboard.putNumber(m_name + " modified encoder value ", getRotationAngle());
+        // SmartDashboard.putNumber(m_name + " raw encoder value ", m_canCoder.getPosition());
+
     }
 
 }

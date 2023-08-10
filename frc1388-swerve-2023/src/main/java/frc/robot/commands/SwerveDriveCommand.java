@@ -7,7 +7,6 @@ package frc.robot.commands;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveDriveTrain;
 
@@ -44,11 +43,11 @@ public class SwerveDriveCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double xVelocity = 3.0 * MathUtil.applyDeadband(m_leftX.get(), 0.1);
-    double yVelocity = -3.0 * MathUtil.applyDeadband(m_leftY.get(), 0.1); 
-    double omega     = 2 * Math.PI * MathUtil.applyDeadband(m_rightX.get(), 0.1);
+    double xVelocity = 3.0 * MathUtil.applyDeadband(m_leftX.get(), 0.1); 
+    double yVelocity = 3.0 * MathUtil.applyDeadband(m_leftY.get(), 0.1);
+    double omega     = Math.PI * MathUtil.applyDeadband(m_rightX.get(), 0.1);
 
-    m_driveTrain.drive(xVelocity, yVelocity, omega); // max speed: 3 m/s transitional, 2pi rad/s (1 rotation/s) rotational (for now)
+    m_driveTrain.drive(xVelocity, yVelocity, omega); // max speed: 3 m/s transitional, pi rad/s (0.5 rotation/s) rotational (for now)
   }
 
   // Called once the command ends or is interrupted.
