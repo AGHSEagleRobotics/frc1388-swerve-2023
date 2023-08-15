@@ -46,25 +46,25 @@ public class RobotContainer {
           new WPI_TalonFX(1),
           new WPI_TalonFX(5),
           new CANCoder(9),
-          117,
+          71,
           "frontRight"),
       new SwerveModule(
           new WPI_TalonFX(2),
           new WPI_TalonFX(6),
           new CANCoder(10),
-          0,
+          295,
           "frontLeft"),
       new SwerveModule(
           new WPI_TalonFX(3),
           new WPI_TalonFX(7),
           new CANCoder(11),
-          0,
+          343,
           "backLeft"),
       new SwerveModule(
           new WPI_TalonFX(4),
           new WPI_TalonFX(8),
           new CANCoder(12),
-          0,
+          298,
           "backRight"),
       new ADIS16470_IMU());
 
@@ -103,7 +103,14 @@ public class RobotContainer {
       );
     m_driveTrain.setDefaultCommand(m_swerveCommand);
 
-    m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
+    // m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
+
+    // m_driverController.y().whileTrue(new InstantCommand(() -> m_driveTrain.drive(0, 3, 0)));
+    // m_driverController.a().whileTrue(new InstantCommand(() -> m_driveTrain.drive(0, -3, 0)));
+    // m_driverController.x().whileTrue(new InstantCommand(() -> m_driveTrain.drive(-3, 0, 0)));
+    // m_driverController.b().whileTrue(new InstantCommand(() -> m_driveTrain.drive(3, 0, 0)));
+
+
   }
 
   /**

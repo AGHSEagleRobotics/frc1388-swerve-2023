@@ -59,10 +59,12 @@ public class SwerveModule {
         m_rotationMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
 
         m_rotationPID = new PIDController(
-           0.005, // was .005
+           0.007,
             0,
-            0
+            0// was 0.0001
         );
+        m_rotationPID.setTolerance(10);
+        m_rotationPID.enableContinuousInput(0, 360);
 
         // m_rotationMotor.setControlFramePeriod(ControlFrame.Control_3_General, 20); XXX look into this
 
@@ -89,8 +91,8 @@ public class SwerveModule {
      */
     public void setDriveSpeed(double inputSpeed) {
         // m_driveMotor.set(ControlMode.Velocity, inputSpeed * SENSOR_CYCLE_SECONDS_PER_100MS_METERS);        
-        SmartDashboard.putNumber(m_name + " set speed ", inputSpeed / 3);
-        // m_driveMotor.set(inputSpeed / 3);
+        SmartDashboard.putNumber(m_name + " set speed ", inputSpeed);
+        m_driveMotor.set(inputSpeed / 3);
     }
 
     /**
@@ -100,20 +102,19 @@ public class SwerveModule {
     public void setRotationPosition(double angle) {
         // SmartDashboard.putNumber(m_name + "encoder value", getRotationAngle());
         SmartDashboard.putNumber(m_name + " set angle ", angle);
-
-        // m_rotationMotor.set(m_rotationPID.calculate(getRotationAngle(), 90));
+        m_rotationMotor.set(m_rotationPID.calculate(getRotationAngle(), angle));
         // m_rotationMotor.set(m_rotationPID.calculate(getRotationAngle(), 0 + 90));
     }
 
     public double getRotationAngle() {
-        return (m_canCoder.getPosition() - m_encoderOffset) % 360; // neg
+        return (m_canCoder.getPosition() - m_encoderOffset + 36000) % 360; // neg
     }
 
     public void periodic() {
         // System.out.println("encoder angle: " + getRotationAngle() + "\t    motor sensor pos: " + m_rotationMotor.getSelectedSensorPosition());
         // System.out.println("swerve moduleing");
         // m_driveMotor.set(0.2);
-        // SmartDashboard.putNumber(m_name + "encoder value", getRotationAngle());
+        // SmartDashboard.putNumber(m_name + "raw encoder value", m_canCoder.getPosition());
         SmartDashboard.putNumber(m_name + " modified encoder value ", getRotationAngle());
         // SmartDashboard.putNumber(m_name + " raw encoder value ", m_canCoder.getPosition());
 

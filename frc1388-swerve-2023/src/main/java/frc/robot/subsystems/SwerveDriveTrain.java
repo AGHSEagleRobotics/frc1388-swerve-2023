@@ -35,6 +35,12 @@ public class SwerveDriveTrain extends SubsystemBase {
   private final Translation2d m_backLeftTranslation = new Translation2d(-ROBOT_LENGTH / 2, ROBOT_WIDTH / 2);
   private final Translation2d m_backRightTranslation = new Translation2d(-ROBOT_LENGTH / 2, -ROBOT_WIDTH / 2);
 
+
+  // private final Translation2d m_frontRightTranslation = new Translation2d(ROBOT_WIDTH / 2, ROBOT_LENGTH / 2);
+  // private final Translation2d m_frontLeftTranslation = new Translation2d(-ROBOT_WIDTH / 2, ROBOT_LENGTH / 2);
+  // private final Translation2d m_backLeftTranslation = new Translation2d(-ROBOT_WIDTH / 2, -ROBOT_LENGTH / 2);
+  // private final Translation2d m_backRightTranslation = new Translation2d(ROBOT_WIDTH / 2, -ROBOT_WIDTH / 2);
+
   private final Translation2d[] m_swerveTranslation2d = {
     m_frontRightTranslation,
     m_frontLeftTranslation,
@@ -64,7 +70,7 @@ public class SwerveDriveTrain extends SubsystemBase {
   }
 
   public void drive(double xVelocity, double yVelocity, double omega) {
-    System.out.println("x: " + xVelocity + "\t  y: " + yVelocity + "\t  omega: " + omega);
+    SmartDashboard.putString("driver input", "x: " + xVelocity + "\t  y: " + yVelocity + "\t  omega: " + omega);
     ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega, getGyroHeading());
     // ChassisSpeeds normalSpeeds = new ChassisSpeeds(xVelocity, yVelocity, omega); XXX -> for not field relitive <-
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(fieldRelativeSpeeds);
