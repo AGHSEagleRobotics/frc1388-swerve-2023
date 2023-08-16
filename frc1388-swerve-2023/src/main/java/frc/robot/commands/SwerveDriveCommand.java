@@ -44,9 +44,9 @@ public class SwerveDriveCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double yVelocity = -3.0 * MathUtil.applyDeadband(m_leftY.get(), 0.2);
-    double xVelocity = 3.0 * MathUtil.applyDeadband(m_leftX.get(), 0.2); 
-    double omega     = Math.PI * MathUtil.applyDeadband(-m_rightX.get(), 0.2);
+    double xVelocity = -3.0 * MathUtil.applyDeadband(m_leftY.get(), 0.2);
+    double yVelocity = -3.0 * MathUtil.applyDeadband(m_leftX.get(), 0.2); 
+    double omega     = Math.PI * -MathUtil.applyDeadband(m_rightX.get(), 0.2);
 
     m_driveTrain.drive(xVelocity, yVelocity, omega); // max speed: 3 m/s transitional, pi rad/s (0.5 rotation/s) rotational (for now)
   }

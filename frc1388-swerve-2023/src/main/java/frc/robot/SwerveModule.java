@@ -56,20 +56,21 @@ public class SwerveModule {
         m_rotationMotor = rotationMotor;
         m_rotationMotor.configFactoryDefault();
         m_rotationMotor.setNeutralMode(NeutralMode.Brake);
-        m_rotationMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
+        m_rotationMotor.setInverted(true);
+        // m_rotationMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0);
 
         m_rotationPID = new PIDController(
            0.007,
             0,
-            0// was 0.0001
+            0
         );
-        m_rotationPID.setTolerance(10);
+        m_rotationPID.setTolerance(5);
         m_rotationPID.enableContinuousInput(0, 360);
 
         // m_rotationMotor.setControlFramePeriod(ControlFrame.Control_3_General, 20); XXX look into this
 
         m_canCoder = canCoder;
-        m_canCoderConfig.sensorTimeBase = SensorTimeBase.PerSecond;
+        // m_canCoderConfig.sensorTimeBase = SensorTimeBase.PerSecond;
         // m_canCoderConfig.magnetOffsetDegrees(encoderOffset);
         m_canCoder.configAllSettings(m_canCoderConfig);
         m_encoderOffset = encoderOffset;
@@ -107,7 +108,7 @@ public class SwerveModule {
     }
 
     public double getRotationAngle() {
-        return (m_canCoder.getPosition() - m_encoderOffset + 36000) % 360; // neg
+        return (m_canCoder.getAbsolutePosition() - m_encoderOffset + 36000) % 360;
     }
 
     public void periodic() {

@@ -46,27 +46,35 @@ public class RobotContainer {
           new WPI_TalonFX(1),
           new WPI_TalonFX(5),
           new CANCoder(9),
-          71,
+          282,
           "frontRight"),
       new SwerveModule(
           new WPI_TalonFX(2),
           new WPI_TalonFX(6),
           new CANCoder(10),
-          295,
+          203,
           "frontLeft"),
       new SwerveModule(
           new WPI_TalonFX(3),
           new WPI_TalonFX(7),
           new CANCoder(11),
-          343,
+          36,
           "backLeft"),
       new SwerveModule(
           new WPI_TalonFX(4),
           new WPI_TalonFX(8),
           new CANCoder(12),
-          298,
+          167,
           "backRight"),
-      new ADIS16470_IMU());
+      new ADIS16470_IMU()
+    );
+  private final SwerveModule m_swerveModule = new SwerveModule(
+    new WPI_TalonFX(1),
+    new WPI_TalonFX(5),
+    new CANCoder(9),
+    71,
+    "frontRight");
+
 
   /** controller */
   private final CommandXboxController m_driverController = new CommandXboxController(OperatorConstants.kDriverControllerPort);

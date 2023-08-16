@@ -72,9 +72,12 @@ public class SwerveDriveTrain extends SubsystemBase {
   public void drive(double xVelocity, double yVelocity, double omega) {
     SmartDashboard.putString("driver input", "x: " + xVelocity + "\t  y: " + yVelocity + "\t  omega: " + omega);
     ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega, getGyroHeading());
-    // ChassisSpeeds normalSpeeds = new ChassisSpeeds(xVelocity, yVelocity, omega); XXX -> for not field relitive <-
+    // ChassisSpeeds normalSpeeds = new ChassisSpeeds(xVelocity, yVelocity, omega); //XXX -> for not field relitive <-
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(fieldRelativeSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, 3.0);
+
+    // SwerveModuleState testState = new SwerveModuleState(0, new Rotation2d((Math.toRadians(45))));
+    // m_frontRight.setSwerveModuleStates(testState);
 
     m_frontRight.setSwerveModuleStates(states[0]);
     m_frontLeft.setSwerveModuleStates(states[1]);
@@ -89,7 +92,7 @@ public class SwerveDriveTrain extends SubsystemBase {
   }
 
   private Rotation2d getGyroHeading() {
-    return new Rotation2d(-Math.toRadians(Math.IEEEremainder(m_gyro.getAngle(), 360)));
+    return new Rotation2d(Math.toRadians(Math.IEEEremainder(m_gyro.getAngle(), 360)));
   }
 
   public void resetGyroHeading() {
