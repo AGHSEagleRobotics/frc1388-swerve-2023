@@ -16,15 +16,20 @@ import java.time.Instant;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
+import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -66,7 +71,7 @@ public class RobotContainer {
           new CANCoder(12),
           167,
           "backRight"),
-      new ADIS16470_IMU()
+      new AHRS(SerialPort.Port.kUSB)
     );
   private final SwerveModule m_swerveModule = new SwerveModule(
     new WPI_TalonFX(1),
@@ -105,18 +110,21 @@ public class RobotContainer {
   private void configureBindings() {
     SwerveDriveCommand m_swerveCommand = new SwerveDriveCommand(
         m_driveTrain,
+        () -> m_driverController.getRightTriggerAxis(),
         () -> m_driverController.getLeftY(),
         () -> m_driverController.getLeftX(),
         () -> m_driverController.getRightX()
       );
     m_driveTrain.setDefaultCommand(m_swerveCommand);
 
-    // m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
+    m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
+    m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetOdometry()));
 
-    // m_driverController.y().whileTrue(new InstantCommand(() -> m_driveTrain.drive(0, 3, 0)));
-    // m_driverController.a().whileTrue(new InstantCommand(() -> m_driveTrain.drive(0, -3, 0)));
-    // m_driverController.x().whileTrue(new InstantCommand(() -> m_driveTrain.drive(-3, 0, 0)));
-    // m_driverController.b().whileTrue(new InstantCommand(() -> m_driveTrain.drive(3, 0, 0)));
+
+    // m_driverController.y().whileTrue(new RunCommand(() -> m_driveTrain.drive(0, 0.6, 0)));
+    // m_driverController.a().whileTrue(new RunCommand(() -> m_driveTrain.drive(0, -0.6, 0)));
+    m_driverController.x().whileTrue(new RunCommand(() -> m_driveTrain.drive(-0.6, 0, 0)));
+    // m_driverController.b().whileTrue(new RunCommand(() -> m_driveTrain.drive(0.6, 0, 0)));
 
 
   }

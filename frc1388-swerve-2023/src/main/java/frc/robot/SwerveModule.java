@@ -12,6 +12,7 @@ import com.ctre.phoenix.sensors.SensorTimeBase;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -32,6 +33,7 @@ public class SwerveModule {
      */
     private final double SENSOR_CYCLE_SECONDS_PER_100MS_METERS = WHEEL_ROTATIONS_PER_METER * MOTOR_ROTATIONS_PER_WHEEL_ROTATION * SENSOR_UNITS_PER_MOTOR_ROTATION * SECONDS_PER_100MS;
 
+    private final double DISTANCE_PER_ENCODER_TICK = (1 / SENSOR_UNITS_PER_MOTOR_ROTATION) * (1 / MOTOR_ROTATIONS_PER_WHEEL_ROTATION) * METERS_PER_WHEEL_ROTATION;
     private final WPI_TalonFX m_rotationMotor;
 
     private final CANCoder m_canCoder;
@@ -86,6 +88,13 @@ public class SwerveModule {
         setRotationPosition(swerveModuleState.angle.getDegrees());
     }
 
+    public SwerveModulePosition getPosition() {
+        return new SwerveModulePosition(
+            m_driveMotor.getSelectedSensorPosition() * DISTANCE_PER_ENCODER_TICK,
+            new Rotation2d(getRotationAngle())
+        );
+    }
+
     /**
      * speed of the motor
      * @param inputSpeed is in meters / second
@@ -117,6 +126,7 @@ public class SwerveModule {
         // m_driveMotor.set(0.2);
         // SmartDashboard.putNumber(m_name + "raw encoder value", m_canCoder.getPosition());
         SmartDashboard.putNumber(m_name + " modified encoder value ", getRotationAngle());
+        SmartDashboard.putNumber(m_name + " distance in meters wheel has traveled", m_driveMotor.getSelectedSensorPosition() * DISTANCE_PER_ENCODER_TICK);
         // SmartDashboard.putNumber(m_name + " raw encoder value ", m_canCoder.getPosition());
 
     }
