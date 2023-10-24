@@ -83,6 +83,8 @@ public class SwerveModule {
     public void setSwerveModuleStates(SwerveModuleState inputState) {
         Rotation2d rotation = new Rotation2d(Math.toRadians(getRotationAngle()));
         SwerveModuleState swerveModuleState = SwerveModuleState.optimize(inputState, rotation);
+        // setDriveSpeed(swerveModuleState.speedMetersPerSecond);
+        // setRotationPosition(swerveModuleState.angle.getDegrees());
 
         setDriveSpeed(swerveModuleState.speedMetersPerSecond);
         setRotationPosition(swerveModuleState.angle.getDegrees());
@@ -91,7 +93,8 @@ public class SwerveModule {
     public SwerveModulePosition getPosition() {
         return new SwerveModulePosition(
             m_driveMotor.getSelectedSensorPosition() * DISTANCE_PER_ENCODER_TICK,
-            new Rotation2d(getRotationAngle())
+            // new Rotation2d()
+            new Rotation2d(Math.toRadians(getRotationAngle()))
         );
     }
 
@@ -117,7 +120,8 @@ public class SwerveModule {
     }
 
     public double getRotationAngle() {
-        return (m_canCoder.getAbsolutePosition() - m_encoderOffset + 36000) % 360;
+        return (m_canCoder.getAbsolutePosition
+        () - m_encoderOffset + 36000) % 360;
     }
 
     public void periodic() {

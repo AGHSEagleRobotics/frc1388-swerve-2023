@@ -101,11 +101,12 @@ public class SwerveDriveTrain extends SubsystemBase {
 
   public void drive(double xVelocity, double yVelocity, double omega) {
     SmartDashboard.putString("driver input", "x: " + xVelocity + "\t  y: " + yVelocity + "\t  omega: " + omega);
-    ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega,
-        getGyroHeading());
+    ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega, getGyroHeading());
     // ChassisSpeeds normalSpeeds = new ChassisSpeeds(xVelocity, yVelocity, omega);
     // //XXX -> for not field relitive <-
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(fieldRelativeSpeeds);
+    // SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(normalSpeeds);
+
     SwerveDriveKinematics.desaturateWheelSpeeds(states, 3.0);
 
     // SwerveModuleState testState = new SwerveModuleState(0, new
@@ -171,6 +172,8 @@ public class SwerveDriveTrain extends SubsystemBase {
     m_frontLeft.periodic();
     m_backLeft.periodic();
     m_backRight.periodic();
+
+    SmartDashboard.putNumber("XXXgyro", m_navxGyro.getAngle());
 
     SmartDashboard.putBoolean("has gyro been reset", hasGyroBeenReset);
 

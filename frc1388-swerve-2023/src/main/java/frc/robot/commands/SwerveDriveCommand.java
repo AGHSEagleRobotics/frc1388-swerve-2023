@@ -70,7 +70,7 @@ public class SwerveDriveCommand extends CommandBase {
 
     */
 
-    double omega = 4 * Math.PI * -scale(MathUtil.applyDeadband(m_rightX.get(), 0.2), 5);
+    double omega = 2 * Math.PI * -scale(MathUtil.applyDeadband(m_rightX.get(), 0.2), 5);
 
     double speed = Math.hypot(xVelocity, yVelocity);
     double newx = -0.01 * speed * omega * xVelocity;
