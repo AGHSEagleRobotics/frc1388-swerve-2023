@@ -9,10 +9,13 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
-import frc.robot.LimelightHelpers.LimelightResults;
-import frc.robot.helpers.Point3d;
 
 public class Limelight extends SubsystemBase {
+
+  private final NetworkTableEntry m_tx;
+  private final NetworkTableEntry m_ty;
+  private final NetworkTableEntry m_ta;
+
 
   private final NetworkTableEntry m_botPos;
   private final NetworkTableEntry m_camPos;
@@ -20,30 +23,34 @@ public class Limelight extends SubsystemBase {
 
   /** Creates a new Limelight. */
   public Limelight() {
-    // m_botPos = NetworkTableInstance.getDefault().getTable("limelight").getEntry("targetpose_cameraspace");
+
+    m_tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx");
+    m_ty = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty");
+    m_ta = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta");
+
     m_botPos = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose");
+    m_camPos = NetworkTableInstance.getDefault().getTable("limelight").getEntry("targetpose_cameraspace");
 
-    m_camPos = NetworkTableInstance.getDefault().getTable("limelight").getEntry("camerapose_targetspace");
   }
-
-  // public Point3d getRobotPos() {
-  //   double[] rawPos =  m_botPos.getDoubleArray(new double[6]);
-  //   return new Point3d(rawPos[0], rawPos[1], rawPos[2]);
-    
-  // }
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("tx", m_tx.getDouble(0));
+    SmartDashboard.putNumber("ty", m_ty.getDouble(0));
+    SmartDashboard.putNumber("ta", m_ta.getDouble(0));
+
+
+
     double[] rawPos =  m_botPos.getDoubleArray(new double[6]);
     double[] camPos =  m_camPos.getDoubleArray(new double[6]);
-
-
 
     if (rawPos.length != 0) {
       SmartDashboard.putNumber("x pose-limelight", rawPos[0]);
       SmartDashboard.putNumber("y pose-limelight", rawPos[1]);
       SmartDashboard.putNumber("z pose-limelight", rawPos[2]);
+    }
 
+    if (camPos.length != 0) {
       SmartDashboard.putNumber("x cam pose-limelight", camPos[0]);
       SmartDashboard.putNumber("y cam pose-limelight", camPos[1]);
       SmartDashboard.putNumber("z cam pose-limelight", camPos[2]);

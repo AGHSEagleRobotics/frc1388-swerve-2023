@@ -14,6 +14,7 @@ import frc.robot.subsystems.SwerveDriveTrain;
 import frc.robot.subsystems.SwerveModuleTestSubsystem;
 
 import java.time.Instant;
+import java.util.List;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
@@ -23,6 +24,15 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
@@ -30,7 +40,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -139,10 +151,36 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // return null; // <- if this is broken, this is why XXX
-    return new AutoDriveCommand(m_driveTrain);
-    // An example command will be run in autonomous
-    // return Autos.exampleAuto(m_exampleSubsystem); XXX example, remove latter
 
+    TrajectoryConfig tc = new TrajectoryConfig(
+      1,
+      3)
+      .setKinematics(m_driveTrain.getKinematics());
+
+    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0, 0, new Rotation2d(0)),
+      List.of(
+        new Translation2d(1, 0),
+        new Translation2d(1, 1)
+        ),
+      new Pose2d(1, 1, new Rotation2d(0)),
+      tc
+    );
+
+    PIDController xController = new PIDController(0.1, 0, 0);
+    PIDController yController = new PIDController(0.1, 0, 0);
+    ProfiledPIDController thetaController = new ProfiledPIDController(0.1, 0, 0, null);
+
+    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+      trajectory,
+       () -> m_driveTrain.getRobotPose(),
+       m_driveTrain.getKinematics(),
+       xController,
+       yController,
+       thetaController,
+       m_driveTrain::drive,
+       m_driveTrain);
+
+       //EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
   }
 }

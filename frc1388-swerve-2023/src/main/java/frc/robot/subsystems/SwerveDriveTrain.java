@@ -99,6 +99,10 @@ public class SwerveDriveTrain extends SubsystemBase {
     // SwerveModulePosition());
   }
 
+  public SwerveDriveKinematics getKinematics() {
+    return m_kinematics;
+  }
+
   public void drive(double xVelocity, double yVelocity, double omega) {
     SmartDashboard.putString("driver input", "x: " + xVelocity + "\t  y: " + yVelocity + "\t  omega: " + omega);
     ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega, getGyroHeading());
@@ -161,6 +165,10 @@ public class SwerveDriveTrain extends SubsystemBase {
             m_backLeft.getPosition(),
             m_backRight.getPosition() },
         new Pose2d());
+  }
+
+  public Pose2d getRobotPose() {
+    return m_odometry.getPoseMeters();
   }
 
   @Override
