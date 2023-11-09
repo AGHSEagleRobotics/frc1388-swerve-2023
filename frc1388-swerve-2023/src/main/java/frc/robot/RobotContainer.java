@@ -19,10 +19,17 @@ import java.util.List;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.kauailabs.navx.frc.AHRS;
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
+// import com.pathplanner.lib.*;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+// import com.pathplanner.lib.PathConstraints;
+// import com.pathplanner.lib.auto.AutoBuilder;
+// import com.pathplanner.lib.commands.PathPlannerAuto;
+// import com.pathplanner.lib.path.PathPlannerPath;
+// import com.pathplanner.lib.PathPlanner;
+// import com.pathplanner.lib.PathPlannerTrajectory;
+// import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
+import com.pathplanner.lib.path.PathPlannerTrajectory;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -42,6 +49,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -134,7 +142,7 @@ public class RobotContainer {
     m_driveTrain.setDefaultCommand(m_swerveCommand);
 
     m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
-    m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetOdometry()));
+    m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
 
     // m_driverController.y().whileTrue(new RunCommand(() -> m_driveTrain.drive(0, 0.6, 0)));
@@ -152,35 +160,12 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
 
-    TrajectoryConfig tc = new TrajectoryConfig(
-      1,
-      3)
-      .setKinematics(m_driveTrain.getKinematics());
 
-    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0, 0, new Rotation2d(0)),
-      List.of(
-        new Translation2d(1, 0),
-        new Translation2d(1, 1)
-        ),
-      new Pose2d(1, 1, new Rotation2d(0)),
-      tc
-    );
 
-    PIDController xController = new PIDController(0.1, 0, 0);
-    PIDController yController = new PIDController(0.1, 0, 0);
-    ProfiledPIDController thetaController = new ProfiledPIDController(0.1, 0, 0, null);
 
-    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-      trajectory,
-       () -> m_driveTrain.getRobotPose(),
-       m_driveTrain.getKinematics(),
-       xController,
-       yController,
-       thetaController,
-       m_driveTrain::drive,
-       m_driveTrain);
+    final PathPlannerPath examplePath = PathPlannerPath.fromPathFile("basic");
+    m_driveTrain.resetPose(new Pose2d());
+    return m_driveTrain.getSwerveControllerCommand(examplePath);
 
-       //EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
   }
 }

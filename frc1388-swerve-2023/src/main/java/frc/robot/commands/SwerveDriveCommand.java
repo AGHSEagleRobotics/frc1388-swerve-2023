@@ -72,11 +72,14 @@ public class SwerveDriveCommand extends CommandBase {
 
     double omega = 2 * Math.PI * -scale(MathUtil.applyDeadband(m_rightX.get(), 0.2), 5);
 
-    double speed = Math.hypot(xVelocity, yVelocity);
-    double newx = -0.01 * speed * omega * xVelocity;
-    double newy = -0.01 * speed * omega * yVelocity;
-    SmartDashboard.putNumber("newx", newx);
-    SmartDashboard.putNumber("newy", newy);
+    // double speed = Math.hypot(xVelocity, yVelocity);
+    // double newx = -0.01 * speed * omega * xVelocity;
+    // double newy = -0.01 * speed * omega * yVelocity;
+    // SmartDashboard.putNumber("newx", newx);
+    // SmartDashboard.putNumber("newy", newy);
+
+    SmartDashboard.putNumber("XVel", xVelocity);
+    SmartDashboard.putNumber("YVel", yVelocity);
 
     m_driveTrain.drive(xVelocity, yVelocity, omega); // max speed: 3 m/s transitional, pi rad/s (0.5 rotation/s) rotational (for now)
   }
