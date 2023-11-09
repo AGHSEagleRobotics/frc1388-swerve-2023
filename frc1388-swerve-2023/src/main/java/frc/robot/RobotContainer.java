@@ -5,52 +5,18 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.AutoDriveCommand;
 // import frc.robot.commands.Autos;
 import frc.robot.commands.SwerveDriveCommand;
-import frc.robot.commands.SwerveModuleTestCommand;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.SwerveDriveTrain;
-import frc.robot.subsystems.SwerveModuleTestSubsystem;
-
-import java.time.Instant;
-import java.util.List;
-
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.kauailabs.navx.frc.AHRS;
-// import com.pathplanner.lib.*;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-// import com.pathplanner.lib.PathConstraints;
-// import com.pathplanner.lib.auto.AutoBuilder;
-// import com.pathplanner.lib.commands.PathPlannerAuto;
-// import com.pathplanner.lib.path.PathPlannerPath;
-// import com.pathplanner.lib.PathPlanner;
-// import com.pathplanner.lib.PathPlannerTrajectory;
-// import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
-import com.pathplanner.lib.path.PathPlannerTrajectory;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -143,14 +109,6 @@ public class RobotContainer {
 
     m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
     m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
-
-
-    // m_driverController.y().whileTrue(new RunCommand(() -> m_driveTrain.drive(0, 0.6, 0)));
-    // m_driverController.a().whileTrue(new RunCommand(() -> m_driveTrain.drive(0, -0.6, 0)));
-    m_driverController.x().whileTrue(new RunCommand(() -> m_driveTrain.drive(-0.6, 0, 0)));
-    // m_driverController.b().whileTrue(new RunCommand(() -> m_driveTrain.drive(0.6, 0, 0)));
-
-
   }
 
   /**
@@ -159,13 +117,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-
-
-
-
-    final PathPlannerPath examplePath = PathPlannerPath.fromPathFile("basic");
-    m_driveTrain.resetPose(new Pose2d());
-    return m_driveTrain.getSwerveControllerCommand(examplePath);
-
+    return new PathPlannerAuto("basic");
   }
 }

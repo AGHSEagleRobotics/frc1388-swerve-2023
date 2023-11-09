@@ -121,20 +121,20 @@ public class SwerveDriveTrain extends SubsystemBase {
       }
     }).start();
 
-    AutoBuilder.configureHolonomic(
-      this::getPose, // Robot pose supplier
-      this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
-      this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-      this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-      new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-          new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-          new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
-          4.5, // Max module speed, in m/s
-          0.4, // Drive base radius in meters. Distance from robot center to furthest module.
-          new ReplanningConfig() // Default path replanning config. See the API for the options here
-      ),
-      this // Reference to this subsystem to set requirements
-  );
+  //   AutoBuilder.configureHolonomic(
+  //     this::getPose, // Robot pose supplier
+  //     this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+  //     this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+  //     this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+  //     new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+  //         new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+  //         new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+  //         4.5, // Max module speed, in m/s
+  //         0.4, // Drive base radius in meters. Distance from robot center to furthest module.
+  //         new ReplanningConfig() // Default path replanning config. See the API for the options here
+  //     ),
+  //     this // Reference to this subsystem to set requirements
+  // );
 
     // swerveOdometry = new SwerveDriveOdometry(new
     // SwerveDriveKinematics(m_frontRightTranslation, m_frontLeftTranslation,
@@ -158,6 +158,21 @@ public class SwerveDriveTrain extends SubsystemBase {
     // );
 
 
+    
+
+    AutoBuilder.configureHolonomic(
+      this::getPose,
+      this::resetPose,
+      this::getRobotRelativeSpeeds, 
+      this::driveRobotRelative,
+      new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+                new PIDConstants(1.0, 0.0, 0.0), // Translation PID constants
+                new PIDConstants(1.0, 0.0, 0.0), // Rotation PID constants
+                4.5, // Max module speed, in m/s
+                0.4, // Drive base radius in meters. Distance from robot center to furthest module.
+                new ReplanningConfig() // Default path replanning config. See the API for the options here
+            ),
+        this);
     
 
     // System.out.println("AUTO BUILDER\n=\n=\n=\n=\n=\n=\n=\n=\n=\n=\n=\n=\n=\n=\n=\n=\n=\n=\n=\n=\n=\n=\n=\n=\n=\n=\n=\n=");
@@ -284,29 +299,32 @@ public class SwerveDriveTrain extends SubsystemBase {
 
   }
 
+  @Deprecated
   public Command getSwerveControllerCommand(PathPlannerPath trajectory) { // PathPlannerPath
 
+    return null;
 
-    return new FollowPathWithEvents(
-        new FollowPathHolonomic(
-            trajectory,
-            this::getPose, // Robot pose supplier
-            this::getChassisSpeeds,
-            // this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
-            // this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-            new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                new PIDConstants(1.0, 0.0, 0.0), // Translation PID constants
-                new PIDConstants(1.0, 0.0, 0.0), // Rotation PID constants
-                4.5, // Max module speed, in m/s
-                0.4, // Drive base radius in meters. Distance from robot center to furthest module.
-                new ReplanningConfig() // Default path replanning config. See the API for the options here
-            ),
-            this // Reference to this subsystem to set requirements
-        ),
-        trajectory, // FollowPathWithEvents also requires the path
-        this::getPose // FollowPathWithEvents also requires the robot pose supplier
-    );
+
+    // return new FollowPathWithEvents(
+    //     new FollowPathHolonomic(
+    //         trajectory,
+    //         this::getPose, // Robot pose supplier
+    //         this::getChassisSpeeds,
+    //         // this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+    //         // this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+    //         this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+    //         new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+    //             new PIDConstants(1.0, 0.0, 0.0), // Translation PID constants
+    //             new PIDConstants(1.0, 0.0, 0.0), // Rotation PID constants
+    //             4.5, // Max module speed, in m/s
+    //             0.4, // Drive base radius in meters. Distance from robot center to furthest module.
+    //             new ReplanningConfig() // Default path replanning config. See the API for the options here
+    //         ),
+    //         this // Reference to this subsystem to set requirements
+    //     ),
+    //     trajectory, // FollowPathWithEvents also requires the path
+    //     this::getPose // FollowPathWithEvents also requires the robot pose supplier
+    // );
 
   }
 
